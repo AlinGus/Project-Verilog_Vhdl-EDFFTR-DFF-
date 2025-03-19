@@ -1,0 +1,126 @@
+
+**** 01/15/25 17:39:35 ********* PSpice 9.2 (Mar 2000) ******** ID# 1 ********
+
+ *CIRCUIT DE LUCRU
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+*             RN D E CK QN Q  Vdd
+.subckt EDFFTR 1 2 3 13 15 16 17
+
+X1 1 4 17 INV
+X2 2 5 17 INV
+X3 3 6 17 INV
+X4 5 3 8 17 AND2
+X5 6 7 9 17 AND2
+X6 4 8 9 10 17 NOR3
+X7 10 20 21 11 17 INVC
+X8 11 12 17 INV
+X9 12 21 20 11 17 INVC
+X10 12 21 20 7 17 INVC
+X11 7 14 17 INV
+X12 14 20 21 7 17 INVC
+X13 14 15 17 INV
+X14 7 16 17 INV
+X15 13 20 17 INV
+X16 20 21 17 INV
+.ends
+
+
+
+
+
+*Testarea circuitului
+.INC CMOS_EKV26_05.txt
+-----$
+ERROR -- Unable to open file
+.INC AND2.txt
+
+**** INCLUDING AND2.txt ****
+*SUBCIRCUIT AND2
+           * I I O Vdd
+.subckt AND2 1 2 4 5
+Xnand2 1 2 3 5 NAND2
+Xinv 3 4 5 INV
+.ends
+
+**** RESUMING EDFFTR.cir ****
+.INC NAND2.txt
+
+**** INCLUDING NAND2.txt ****
+*SUBCIRCUIT NAND2
+            * I I O Vdd
+.subckt NAND2 1 2 4 5
+MN1 4 1 3 0 NMOS L=0.5U W=1U
+MN2 3 2 0 0 NMOS L=0.5U W=1U
+
+MP1 4 1 5 5 PMOS L=0.5U W=2.14U
+MP2 4 2 5 5 PMOS L=0.5U W=2.14U
+.ends
+
+**** RESUMING EDFFTR.cir ****
+.INC NOR3.txt
+
+**** INCLUDING NOR3.txt ****
+*SUBCIRCUIT NOR3
+           * I I I O Vdd
+.subckt NOR3 1 2 3 5 4
+MN1 5 1 0 0 NMOS L=0.5U W=1U
+MN2 5 2 0 0 NMOS L=0.5U W=1U
+MN3 5 3 0 0 NMOS L=0.5U W=1U
+
+MP1 7 1 4 4 PMOS L=0.5U W=12.86U
+MP2 6 2 7 4 PMOS L=0.5U W=12.86U
+MP3 5 3 6 4 PMOS L=0.5U W=12.86U
+.ends
+
+**** RESUMING EDFFTR.cir ****
+.INC INVERSOR.txt
+
+**** INCLUDING INVERSOR.txt ****
+*SUBCIRCUIT INVERSOR
+*           I O Vdd
+.subckt INV 1 2 3
+MN1 2 1 0 0 NMOS L=0.5U W=1U
+*   D G S Substr
+MP1 2 1 3 3 PMOS L=0.5U W=4.28U
+.ends
+
+**** RESUMING EDFFTR.cir ****
+.INC INVERSORC.txt
+
+**** INCLUDING INVERSORC.txt ****
+*SUBCIRCUIT INVERSOR COMANDAT 
+           * I C Cn O Vdd
+.subckt INVC 1 2 3 4 5
+MN1 4 2 7 0 NMOS L=0.5U W=1U
+MN2 7 1 0 0 NMOS L=0.5U W=1U
+
+MP1 6 1 5 5 PMOS L=0.5U W=4.28U
+MP2 4 3 6 5 PMOS L=0.5U W=4.28U
+.ends 
+
+**** RESUMING EDFFTR.cir ****
+
+
+XEDFFTR 1 2 3 13 15 16 17 EDFFTR
+VDD 17 0 {vdd}
+VCK 13 0 PULSE(5 0 0 {tr} {tr} 2n 4n)
+VRN 1 0 PULSE(5 0 0 0.4N 0.4N 5N 90N)
+VD 2 0 PULSE(0 5 0 0.4N 0.4N 12N 16N)
+VE 3 0 PULSE(5 0 0 0.4n 0.4N 30N 60n)
+.param vdd=5
+.param tr=0.4n
+CL1 15 0 {CL}
+CL2 16 0 {CL}
+.param CL=0.4p
+.TRAN 1n 100n 
+.PROBE
+.END
+

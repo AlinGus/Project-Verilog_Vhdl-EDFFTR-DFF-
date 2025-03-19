@@ -1,0 +1,6 @@
+*SUBCIRCUIT AND2
+           * I I O Vdd
+.subckt AND2 1 2 4 5
+Xnand2 1 2 3 5 NAND2
+Xinv 3 4 5 INV
+.ends

@@ -1,0 +1,51 @@
+*CIRCUIT DE LUCRU
+*             RN D E CK QN Q  Vdd
+.subckt EDFFTR 1 2 3 13 15 16 17
+
+X1 1 4 17 INV
+X2 2 5 17 INV
+X3 3 6 17 INV
+X4 5 3 8 17 AND2
+X5 6 7 9 17 AND2
+X6 4 8 9 10 17 NOR3
+X7 10 20 21 11 17 INVC
+X8 11 12 17 INV
+X9 12 21 20 11 17 INVC
+X10 12 21 20 7 17 INVC
+X11 7 14 17 INV
+X12 14 20 21 7 17 INVC
+X13 14 15 17 INV
+X14 7 16 17 INV
+X15 13 20 17 INV
+X16 20 21 17 INV
+.ends
+
+
+
+
+
+*Testarea circuitului
+.INC CMOS_EKV26_05.txt
+.INC AND2.txt
+.INC NAND2.txt
+.INC NOR3.txt
+.INC INVERSOR.txt
+.INC INVERSORC.txt
+
+
+*OBS am pus valorile la C=0 pentru a putea observa mai bine trecerile intre stari.(Modelarea reala are si C=0.4p)
+
+XEDFFTR 1 2 3 13 15 16 17 EDFFTR
+VDD 17 0 {vdd}
+VCK 13 0 PULSE(5 0 0 {tr} {tr} 2n 4n)
+VRN 1 0 PULSE(5 0 0 0.4N 0.4N 5N 90N)
+VD 2 0 PULSE(0 5 0 0.4N 0.4N 12N 16N)
+VE 3 0 PULSE(5 0 0 0.4n 0.4N 30N 60n)
+.param vdd=5
+.param tr=0.4n
+CL1 15 0 {CL}
+CL2 16 0 {CL}
+.param CL=0.0p
+.TRAN 1n 100n 
+.PROBE
+.END
